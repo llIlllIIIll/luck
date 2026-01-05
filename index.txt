@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABC</title>
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system;
+    height: 100vh;
+  }
+  .page {
+    display: none;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  .active {
+    display: block;
+  }
+  .top {
+    height: 33vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+  .middle {
+    margin-top: 20px;
+  }
+  input, button {
+    width: 80%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 16px;
+  }
+  .bottom {
+    position: absolute;
+    bottom: 20%;
+    width: 100%;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- 메인 -->
+<div id="main" class="page active">
+  <div class="top">ABC</div>
+  <div class="middle">
+    <div id="phrase">모든 이름에는 신호가 있습니다.</div>
+    <input id="nameInput" placeholder="이름을 입력하세요.">
+    <button onclick="goResult()">진행</button>
+  </div>
+</div>
+
+<!-- 결과 -->
+<div id="result" class="page">
+  <div id="resultText"></div>
+  <div style="margin-top:20px;" id="energyText"></div>
+  <div class="bottom">
+    <button onclick="closeResult()">닫기</button>
+  </div>
+</div>
+
+<script>
+const results = [
+  "당신의 이름은 흐름을 바꿉니다.",
+  "이 이름에는 방향성이 있습니다.",
+  "지금 이 이름은 반응하고 있습니다."
+];
+
+const energies = [
+  "집중",
+  "확장",
+  "안정",
+  "전환"
+];
+
+let userName = "";
+let energy = "";
+let swipeEnabled = false;
+let touched = false;
+
+function goResult() {
+  const input = document.getElementById("nameInput");
+  if (!input.value) return;
+
+  userName = input.value;
+  energy = energies[Math.floor(Math.random() * energies.length)];
+
+  document.getElementById("resultText").innerText =
+    results[Math.floor(Math.random() * results.length)];
+
+  document.getElementById("energyText").innerText =
+    "핵심 에너지: " + energy;
+
+  show("result");
+}
+
+function closeResult() {
+  show("main");
+  swipeEnabled = true;
+}
+
+function show(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+const phrase = document.getElementById("phrase");
+
+document.addEventListener("touchstart", () => {
+  if (swipeEnabled) touched = true;
+});
+
+document.addEventListener("touchmove", () => {
+  if (swipeEnabled && touched) {
+    phrase.innerText = `모든 ${userName}에는 ${energy}가 있습니다.`;
+  }
+});
+
+document.addEventListener("touchend", () => {
+  if (swipeEnabled) {
+    phrase.innerText = "모든 이름에는 신호가 있습니다.";
+    swipeEnabled = false;
+    touched = false;
+  }
+});
+
+document.getElementById("nameInput").addEventListener("input", () => {
+  swipeEnabled = false;
+});
+
+</script>
+</body>
+</html>
